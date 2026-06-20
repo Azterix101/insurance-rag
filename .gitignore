@@ -1,0 +1,18 @@
+# Target build directories
+**/target/
+*.class
+
+# macOS system files
+.DS_Store
+*.swp
+
+# IDE configurations
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+
+# Temporary files
+**/*.bak

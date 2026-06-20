@@ -1,0 +1,46 @@
+services:
+  # 1. PostgreSQL with pgvector for Hybrid Search
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: rag-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: insurance_rag
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: local_password_123
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    platform: linux/arm64 
+
+  # 2. Microsoft Presidio API for PII/PHI Redaction
+  presidio-analyzer:
+    image: mcr.microsoft.com/presidio-analyzer:latest
+    container_name: presidio-analyzer
+    ports:
+      - "5002:5002"
+    environment:
+      - PORT=5002
+
+  presidio-anonymizer:
+    image: mcr.microsoft.com/presidio-anonymizer:latest
+    container_name: presidio-anonymizer
+    ports:
+      - "5001:5001"
+    environment:
+      - PORT=5001
+
+  # 3. LocalStack (Pinned to 3.8.0 to run without requiring a license key)
+  localstack:
+    image: localstack/localstack:3.8.0
+    container_name: localstack-s3
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+    volumes:
+      - localstack:/var/lib/localstack
+
+volumes:
+  pgdata:
+  localstack:
