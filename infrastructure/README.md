@@ -1,17 +1,17 @@
 # Local Infrastructure Stack (insurance-rag-infra)
 
-This directory manages the localized containerized infrastructure required to run the Secure RAG and Ingestion pipeline completely offline on your MacBook [1.1.2]. 
+This directory manages the localized containerized infrastructure required to run the Secure RAG and Ingestion pipeline completely offline on your MacBook.
 
-The stack is optimized for Apple Silicon (ARM64) architectures and mocks AWS S3 storage, Postgres pgvector database layers, and Microsoft Presidio PII/PHI redaction engines natively [1.1.2, 23].
+The stack is optimized for Apple Silicon (ARM64) architectures and mocks AWS S3 storage, Postgres pgvector database layers, and Microsoft Presidio PII/PHI redaction engines natively.
 
 ## Container Stack Overview & Port Mappings
 
 | Service Name | Port | Base Image | Purpose |
 | :--- | :--- | :--- | :--- |
-| `rag-postgres` | `5432` | `pgvector/pgvector:pg16` | Relational vector database [23] |
-| `presidio-analyzer` | `5002` | `mcr.microsoft.com/presidio-analyzer` | Named Entity Recognition for PII/PHI [1.1.2] |
-| `presidio-anonymizer` | `5001` | `mcr.microsoft.com/presidio-anonymizer` | Logic mapper to mask/replace detected PII [1.1.2] |
-| `localstack-s3` | `4566` | `localstack/localstack:3.8.0` | S3 API Mocking Engine [1.1.2] |
+| `rag-postgres` | `5432` | `pgvector/pgvector:pg16` | Relational vector database |
+| `presidio-analyzer` | `5002` | `mcr.microsoft.com/presidio-analyzer` | Named Entity Recognition for PII/PHI |
+| `presidio-anonymizer` | `5001` | `mcr.microsoft.com/presidio-anonymizer` | Logic mapper to mask/replace detected PII |
+| `localstack-s3` | `4566` | `localstack/localstack:3.8.0` | S3 API Mocking Engine |
 
 ---
 
@@ -60,7 +60,7 @@ Once the containers are active and showing as healthy (`docker ps`), you must ru
 ### 1. LocalStack License Key Validation Failures
 * **Error**: `License activation failed! LocalStack cloud disabled...`
 * **Root Cause**: Newer versions of LocalStack (using `latest` or `4.x` tags) enforce API key/auth validations.
-* **Fix**: Your `docker-compose.yml` has been pinned to `localstack/localstack:3.8.0`. This version operates completely offline with zero API key dependencies [1.1.2]. Do not upgrade this tag in development.
+* **Fix**: Your `docker-compose.yml` has been pinned to `localstack/localstack:3.8.0`. This version operates completely offline with zero API key dependencies. Do not upgrade this tag in development.
 
 ### 2. Postgres Port Conflicts (5432)
 * **Error**: `Bind for 0.0.0.0:5432 failed: port is already allocated`
@@ -69,5 +69,5 @@ Once the containers are active and showing as healthy (`docker ps`), you must ru
 
 ### 3. Presidio Pattern Recognition Failures
 * **Error**: Fictional SSNs like `123-45-6789` are not being anonymized.
-* **Root Cause**: Presidio executes standard SSA range validations. Fictional test numbers or numbers with invalid prefixes (like `000` or `666`) are intentionally ignored by the model to prevent false positive flags [2.3.3].
+* **Root Cause**: Presidio executes standard SSA range validations. Fictional test numbers or numbers with invalid prefixes (like `000` or `666`) are intentionally ignored by the model to prevent false positive flags.
 * **Fix**: Ensure your mock testing files use a structurally valid synthetic range prefix (e.g., `457-55-5462`) to verify your database's Human-in-the-Loop review routing.
